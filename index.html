@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Clientes</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tabela de Clientes</h1>
+<table id="clientesTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>nascimento</th>
+            <th>idade</th>
+            <th>cpf</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Os dados serão inseridos aqui -->
+    </tbody>
+</table>
+
+<script>
+    async function fetchclientes() {
+        const response = await fetch('http://localhost:3000/clientes');
+        const clientes = await response.json();
+
+        const tbody = document.querySelector('#clientesTable tbody');
+        clientes.forEach(cliente => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${cliente.id}</td>
+                <td>${cliente.nome}</td>
+                <td>${cliente.nascimento}</td>
+                <td>${cliente.idade}</td>
+                <td>${cliente.cpf}</td>
+                <td>${new Date(cliente.data_cadastro).toLocaleDateString()}</td>
+                <td>${new Date(cliente.ultima_atualizacao).toLocaleDateString()}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    fetchclientes();
+</script>
+
+</body>
+</html>
