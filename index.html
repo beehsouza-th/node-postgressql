@@ -4,19 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabela de Clientes</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+>
 </head>
 <body>
 
@@ -26,39 +14,60 @@
         <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>nascimento</th>
-            <th>idade</th>
-            <th>cpf</th>
-
+            <th>Nascimento</th>
+            <th>Idade</th>
+            <th>CPF</th>
         </tr>
     </thead>
     <tbody>
-        <!-- Os dados serão inseridos aqui -->
+        <tbody>
+            {dados.map((usuario) => (
+              <tr className='table-database-colum'  key={usuario.id}>
+                <td>{usuario.id}</td>
+                <td>{usuario.nome}</td>
+                <td>{usuario.cpf}</td>
+                <td>{usuario.ra}</td>
+                <td>{usuario.datanascimento}</td>
+                <td>{usuario.sexo}</td>
+                <td>{usuario.cidade}</td>
+                <td>{usuario.estado}</td>
+              </tr>
+            ))}
+          </tbody>
     </tbody>
 </table>
 
 <script>
-    async function fetchclientes() {
-        const response = await fetch('http://localhost:3000/clientes');
-        const clientes = await response.json();
+    async function fetchClientes() {
+        try {
+            const response = await fetch('http://localhost:3000/clientes/');
+            const clientes = await response.json();
 
-        const tbody = document.querySelector('#clientesTable tbody');
-        clientes.forEach(cliente => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${cliente.id}</td>
-                <td>${cliente.nome}</td>
-                <td>${cliente.nascimento}</td>
-                <td>${cliente.idade}</td>
-                <td>${cliente.cpf}</td>
-                <td>${new Date(cliente.data_cadastro).toLocaleDateString()}</td>
-                <td>${new Date(cliente.ultima_atualizacao).toLocaleDateString()}</td>
-            `;
-            tbody.appendChild(row);
-        });
+            const tbody = document.querySelector('#clientesTable tbody');
+            tbody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+            clientes.forEach(cliente => {
+                const idade = new Date().getFullYear() - new Date(cliente.nascimento).getFullYear(); // Cálculo da idade
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cliente.id}</td>
+                    <td>${cliente.nome}</td>
+                    <td>${new Date(cliente.nascimento).toLocaleDateString()}</td>
+                    <td>${idade}</td>
+                    <td>${cliente.cpf}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Erro ao buscar clientes:", error);
+        }
     }
 
-    fetchclientes();
+   
+
+    // Chama a função para buscar os clientes quando a página carregar
+   
+    window.onload = fetchClientes;
 </script>
 
 </body>

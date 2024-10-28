@@ -1,58 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { useTable } from 'react-table';
+import './App.css';
+import { useState } from "react";
+import axios from "axios";
 
-const ClientesTable = () => {
-    const [clientes, setClientes] = useState([]);
+export default function App() {
+  const [dados, setDados] = useState([]);
 
-    useEffect(() => {
-        const fetchClientes = async () => {
-            const response = await fetch('http://localhost:3000/clientes');
-            const data = await response.json();
-            setClientes(data);
-        };
-        fetchClientes();
-    }, []);
+  const filtarUsuarios = () => {
+    //o Método get serve par buscar as informações e ou pegar
+    axios.get('http://localhost:3000/clientes/')
+      .then(response => {
+        setDados(response.data);
+      })
+      .catch(error => {
+        console.error('Erro ao listar usuários:', error);
+      });
+  };
 
-    const columns = React.useMemo(
-        () => [
-            { Header: 'ID', accessor: 'id' },
-            { Header: 'Nome', accessor: 'nome' },
-            { Header: 'Email', accessor: 'email' },
-            { Header: 'Telefone', accessor: 'telefone' },
-            { Header: 'Endereço', accessor: 'endereco' },
-            { Header: 'Data de Cadastro', accessor: 'data_cadastro' },
-            { Header: 'Última Atualização', accessor: 'ultima_atualizacao' },
-        ],
-        []
-    );
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: clientes });
-
-    return (
-        <table {...getTableProps()}>
-            <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                        ))}
-                    </tr>
-                ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-                {rows.map(row => {
-                    prepareRow(row);
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map(cell => (
-                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                            ))}
-                        </tr>
-                    );
-                })}
-            </tbody>
+  return (
+    <main>
+      <Header/>
+      <center className="button-camp">
+      <button className="btn-list" onClick={filtarUsuarios}>Listar Usuários</button>
+      </center>
+      <div>
+        <table className="table-database">
+          <thead className='table-database-colum'>
+            <tr>
+              <th>Id</th>
+              <th>Nome</th>
+              <th>Nascimento</th>
+              <th>idade</th>
+              <th>cpf</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dados.map((usuario) => (
+              <tr className='table-database-colum'  key={usuario.id}>
+                <td>{usuario.id}</td>
+                <td>{usuario.nome}</td>
+                <td>{usuario.cpf}</td>
+                <td>{usuario.ra}</td>
+                <td>{usuario.datanascimento}</td>
+                <td>{usuario.sexo}</td>
+                <td>{usuario.cidade}</td>
+                <td>{usuario.estado}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
-    );
-};
+      </div>
 
-export default ClientesTable;
+    </main>
+  );
+}
